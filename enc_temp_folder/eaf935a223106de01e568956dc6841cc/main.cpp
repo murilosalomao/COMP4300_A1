@@ -139,8 +139,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		window.clear();
-		//draw(window, shapes, font, fontColor, fontSize);
-		//computeMovement(shapes, winWidth, winHeight);
+		draw(window, shapes, font, fontColor, fontSize);
+		computeMovement(shapes, winWidth, winHeight);
 		window.display();
 	}
 
