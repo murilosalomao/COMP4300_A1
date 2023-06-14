@@ -10,9 +10,9 @@ public:
 	shared_ptr<sf::Shape> shape;
 	float xSpd;
 	float ySpd;
-	string* name;
+	string name;
 
-	SpeedComponent(shared_ptr<sf::Shape> _shape, float xSpeed, float ySpeed, string* _name) {
+	SpeedComponent(shared_ptr<sf::Shape> _shape, float xSpeed, float ySpeed, string _name) {
 		shape = _shape;
 		xSpd = xSpeed;
 		ySpd = ySpeed;
@@ -20,14 +20,7 @@ public:
 	}
 };
 
-void loadFromFile(
-	sf::RenderWindow& window,
-	sf::Font& font,
-	sf::Color& fontColor,
-	int& fontSize,
-	vector<SpeedComponent>& shapes,
-	const string& filename
-) {
+void loadFromFile(sf::RenderWindow& window, sf::Font& font, sf::Color& fontColor, int& fontSize, vector<SpeedComponent>& shapes, const string& filename) {
 	ifstream fin(filename);
 
 	string firstToken;
@@ -46,20 +39,20 @@ void loadFromFile(
 			fontColor = sf::Color(rColor, gColor, bColor);
 		}
 		else if (firstToken == "Circle") {
-			string* name = NULL;
+			string name;
 			float x, y, spdX, spdY, radius;
 			int rColor, gColor, bColor;
-			fin >> *name >> x >> y >> spdX >> spdY >> rColor >> gColor >> bColor >> radius;
+			fin >> name >> x >> y >> spdX >> spdY >> rColor >> gColor >> bColor >> radius;
 			shared_ptr<sf::Shape> shape = make_shared<sf::CircleShape>(radius);
 			shape->setFillColor(sf::Color(rColor, gColor, bColor));
 			shape->setPosition(x, y);
 			shapes.push_back(SpeedComponent(shape, spdX, spdY, name));
 		}
 		else if (firstToken == "Rectangle") {
-			string* name = NULL;
+			string name;
 			float x, y, spdX, spdY, width, height;
 			int rColor, gColor, bColor;
-			fin >> *name >> x >> y >> spdX >> spdY >> rColor >> gColor >> bColor >> width >> height;
+			fin >> name >> x >> y >> spdX >> spdY >> rColor >> gColor >> bColor >> width >> height;
 			shared_ptr<sf::Shape> shape = make_shared<sf::RectangleShape>(sf::Vector2f(width, height));
 			shape->setFillColor(sf::Color(rColor, gColor, bColor));
 			shape->setPosition(x, y);
@@ -68,20 +61,14 @@ void loadFromFile(
 	}
 }
 
-void draw(
-	sf::RenderWindow& window,
-	vector<SpeedComponent>& shapes,
-	sf::Font font,
-	sf::Color fontColor,
-	int fontSize
-) {
+void draw(sf::RenderWindow& window, vector<SpeedComponent>& shapes, sf::Font font, sf::Color fontColor, int fontSize) {
 
 	for (auto i=0; i<shapes.size(); i++) {
 		window.draw(*shapes[i].shape);
 		sf::Vector2f pos = shapes[i].shape->getPosition();
 		sf::FloatRect bounds = shapes[i].shape->getLocalBounds();
 
-		sf::Text text(*shapes[i].name, font, fontSize);
+		sf::Text text(shapes[i].name, font, fontSize);
 		sf::FloatRect textBounds = text.getLocalBounds();
 
 		text.setFillColor(fontColor);
@@ -94,11 +81,7 @@ void draw(
 	}
 }
 
-void computeMovement(
-	vector<SpeedComponent>& shapes,
-	unsigned int winWidth,
-	unsigned int winHeight
-) {
+void computeMovement(vector<SpeedComponent>& shapes, unsigned int winWidth, unsigned int winHeight) {
 	for (size_t i = 0; i < shapes.size(); i++) {
 		sf::Vector2f currentPos = shapes[i].shape->getPosition();
 		sf::FloatRect bounds = shapes[i].shape->getLocalBounds();
@@ -139,8 +122,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		window.clear();
-		//draw(window, shapes, font, fontColor, fontSize);
-		//computeMovement(shapes, winWidth, winHeight);
+		draw(window, shapes, font, fontColor, fontSize);
+		computeMovement(shapes, winWidth, winHeight);
 		window.display();
 	}
 
